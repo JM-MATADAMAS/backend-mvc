@@ -1,25 +1,61 @@
-const bcrypt = require('bcrypt')
-const firebase = require ('./../config/firebase')
-const IUser = require('./../interfaces/user.interface')
+const firebase = require ('../config/firebase')
+const usersCollection = firebase.firestore().collection('users');
 
-class User extends IUser {
-  constructor (email,password){
-    super()
-    this.email = email
-    this.password = password
-  }
-
-  static async createUser (email,password) {
-    //Código para crear usuario
-  }
-
-  static async findByEmail (email) {
-    //Código para buscar por correo
-  }
-
-  async verifyPassword (password) {
-    //Código para verificar la contraseña
+exports.createUser = async (userData) =>{
+  try {
+    await usersCollection.doc(userData.id).set(userData)
+    return {
+      success: true
+    }
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message
+    }
   }
 }
 
-module.exports = User
+exports.findUserById = async (userId) =>{
+  try {
+    const userFound = await usersCollection.doc(userId).get()
+    if (userFound.exists){
+      return {
+        success: true,
+        user: user.data()
+      }
+    } else {
+      return {
+        success: false,
+        error: 'Usuario no encontrado'
+      }
+    }
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message
+    }
+  }
+}
+
+exports.findUserByEmail = async (email) =>{
+  try {
+    const userEmail = await usersCollection.where('email', '==', email).get()
+    if (!userEmail.empty) {
+      const userFound = userEmail.docs[0]
+      return {
+        success: true,
+        user: userFound.data()
+      }
+    } else {
+      return {
+        success : false,
+        error: 'Usuario no encontrado'
+      }
+    }
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message
+    }
+  }
+}

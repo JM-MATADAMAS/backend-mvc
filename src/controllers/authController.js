@@ -5,7 +5,7 @@ const { createUser, findUserByEmail } = require('../services/user.service')
 exports.signup = async (req,res) => {
   try{
     //Código para registrarse
-    const {email, password} = request.body
+    const {email, password, id} = req.body
     const existingUser = await findUserByEmail(email)
     if (existingUser.success) {
       return res.status(400).json({
@@ -14,13 +14,14 @@ exports.signup = async (req,res) => {
     }
     const saltRounds = 10
     const hashedPassword = await bcrypt.hash(password,saltRounds)
-
+   
     const newUser = {
       email: email,
-      password: hashedPassword
+      password: hashedPassword,
+      id: id
       //Agregar otros campos
     }
-
+    console.log('@@@ AuthController =>', newUser.email, '  ', newUser.password)
     const userResult = await createUser(newUser)
     if (userResult.success) {
       res.status (201).json({
@@ -42,7 +43,7 @@ exports.signup = async (req,res) => {
 exports.login = async (req,res) => {
   try{
     //Código para logearse
-    const {email, password} = request.body
+    const {email, password} = req.body
     const findEmail = await findUserByEmail(email)
     if (!findEmail.success){
       res.status (401).json({
@@ -51,7 +52,7 @@ exports.login = async (req,res) => {
     }
     const user = findEmail.user
     const findPassword = await bcrypt.compare(password, user.password)
-    if (!findPassword.success){
+    if (!findPassword){
       res.status (401).json({
         message: 'Contraseña incorrecta'
       })
@@ -64,13 +65,13 @@ exports.login = async (req,res) => {
       expiresIn: '1h'
     })
 
-    res.status (200).json({
+   return res.status (200).json({
       token: token
     })
   }
   catch (error){
-    res.status(500).json({
+   return {
       message: error.message
-    })
+    }
   }
 }
