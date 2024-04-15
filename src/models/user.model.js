@@ -1,4 +1,5 @@
-const firebase = require ('../config/firebase')
+const firebase = require ('../config/firebase');
+const { all } = require('../routes/authRoutes');
 const usersCollection = firebase.firestore().collection('users');
 
 exports.createUser = async (userData) =>{
@@ -57,5 +58,33 @@ exports.findUserByEmail = async (email) =>{
       success: false,
       error: error.message
     }
+  }
+}
+
+exports.getAllUsers = async() => {
+  try {
+    const allUsers = await usersCollection.get()
+    const users = [] 
+      allUsers.forEach((doc) =>{
+        users.push(doc.data)
+      })
+  } catch (error) {
+    throw new error('Error Getting Users' + error.message)
+  }
+}
+
+exports.deleteUser = async(userId) => {
+  try {
+    await usersCollection.doc(userId).delete()
+  } catch (error) {
+    throw  new Error('Error Deleting User' + error.message)
+  }
+}
+
+exports.updateUser = async(userId, userData) => {
+  try {
+    await usersCollection.doc(userId).update(userData)
+  } catch (error) {
+    throw  new Error('Error Updating User' + error.message)
   }
 }

@@ -1,6 +1,6 @@
 const bcrypt = require ('bcrypt')
 const jsonwebtoken = require ('jsonwebtoken')
-const { createUser, findUserByEmail } = require('../services/user.service')
+const { createUser, findUserByEmail, getAllUsers, deleteUser, updateUser } = require('../services/user.service')
 
 exports.signup = async (req,res) => {
   try{
@@ -73,5 +73,51 @@ exports.login = async (req,res) => {
    return {
       message: error.message
     }
+  }
+}
+
+exports.getAllUsers = async(req, res) => {
+  try {
+    const users = await getAllUsers()
+    res.status(200).json({
+      message: 'Success',
+      users
+    })
+  } catch (error) {
+    res.status(500).json({
+      message: 'Serve Error Getting all Users',
+      error: error.message
+    })
+  }
+}
+
+exports.updateUser = async(req,res) => {
+  try {
+    const userId = req.params.id
+    const userData = req.body
+    await updateUser(userId, userData)
+    res.status(200).json({
+      message: 'User Updated Successfully'
+    })
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error Updating Users',
+      error: error.message
+    })
+  }
+}
+
+exports.deleteUser = async(req,res) => {
+  try {
+    const userId = req.params.id
+    await updateUser(userId)
+    res.status(200).json({
+      message: 'User Deleted Successfully'
+    })
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error Deleting Users',
+      error: error.message
+    })
   }
 }
