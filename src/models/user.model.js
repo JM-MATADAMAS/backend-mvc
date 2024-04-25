@@ -1,5 +1,5 @@
 const firebase = require ('../config/firebase');
-const { all } = require('../routes/authRoutes');
+const { all, use } = require('../routes/authRoutes');
 const usersCollection = firebase.firestore().collection('users');
 
 exports.createUser = async (userData) =>{
@@ -65,11 +65,12 @@ exports.getAllUsers = async() => {
   try {
     const allUsers = await usersCollection.get()
     const users = [] 
-      allUsers.forEach((doc) =>{
-        users.push(doc.data)
-      })
+    allUsers.forEach((doc) =>{
+      users.push(doc.data())
+    })
+    return users
   } catch (error) {
-    throw new error('Error Getting Users' + error.message)
+    throw new Error('Error Getting Users' + error.message)
   }
 }
 

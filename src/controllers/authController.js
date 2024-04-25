@@ -64,14 +64,14 @@ exports.login = async (req,res) => {
     }, process.env.TOP_SECRET, {
       expiresIn: '1h'
     })
-
-   return res.status (200).json({
+    console.log('@@ res login =>', user.email, ' ', user.id)
+    return res.status (200).json({
       token: token
     })
   }
   catch (error){
    return {
-      message: error.message
+      message: error.message,
     }
   }
 }
@@ -85,7 +85,7 @@ exports.getAllUsers = async(req, res) => {
     })
   } catch (error) {
     res.status(500).json({
-      message: 'Serve Error Getting all Users',
+      message: 'Server Error Getting all Users',
       error: error.message
     })
   }
