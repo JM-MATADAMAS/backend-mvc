@@ -14,7 +14,7 @@ exports.signup = async (req,res) => {
     }
     const saltRounds = 10
     const hashedPassword = await bcrypt.hash(password,saltRounds)
-   
+
     const newUser = {
       email: email,
       password: hashedPassword,
@@ -62,7 +62,7 @@ exports.login = async (req,res) => {
       email: user.email,
       userId: user.id
     }, process.env.TOP_SECRET, {
-      expiresIn: '1h'
+      expiresIn: '1d'
     })
     console.log('@@ res login =>', user.email, ' ', user.id)
     return res.status (200).json({
@@ -70,7 +70,7 @@ exports.login = async (req,res) => {
     })
   }
   catch (error){
-   return {
+    return {
       message: error.message,
     }
   }
