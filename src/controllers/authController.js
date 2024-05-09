@@ -5,7 +5,7 @@ const { createUser, findUserByEmail, getAllUsers, deleteUser, updateUser } = req
 exports.signup = async (req,res) => {
   try{
     //Código para registrarse
-    const {email, password, id} = req.body
+    const {nombre, apaterno, amaterno, direccion, telefono, estado, email, password, id} = req.body
     const existingUser = await findUserByEmail(email)
     if (existingUser.success) {
       return res.status(400).json({
@@ -16,6 +16,12 @@ exports.signup = async (req,res) => {
     const hashedPassword = await bcrypt.hash(password,saltRounds)
 
     const newUser = {
+      nombre: nombre,
+      apaterno: apaterno,
+      amaterno: amaterno,
+      direccion: direccion,
+      telefono: telefono,
+      estado: estado,
       email: email,
       password: hashedPassword,
       id: id
